@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>STPL Daily Carrier Report</title>
+<!-- Shown when the link is shared on WhatsApp -->
+<meta property="og:title" content="STPL Daily Carrier Report">
+<meta property="og:description" content="Sushila Transport Pvt. Ltd. — branch-wise and Pan India carrier report">
+
+<!-- Makes "Add to Home Screen" behave like a real app: own icon, own name, no browser address bar -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b2f6e">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="STPL Report">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+  html, body { margin: 0; height: 100%; background: #f3f5f9; }
+  iframe { border: 0; width: 100%; height: 100%; display: block; }
+  #tip {
+    position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 10;
+    background: #1b2f6e; color: #fff; padding: 12px 14px; border-radius: 12px;
+    font: 13px -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  }
+  #tip button { margin-left: auto; background: rgba(255,255,255,.15); color: #fff; border: 0; border-radius: 8px; padding: 6px 10px; font-weight: 700; }
+</style>
+</head>
+<body>
+<iframe id="app" title="STPL Daily Carrier Report" allow="clipboard-write"></iframe>
+
+<!-- One-time reminder so people actually save the app icon instead of just this browser tab -->
+<div id="tip"></div>
+
+<script>
+  // Your Apps Script web app link (only here — people never see it in the address bar)
+  const APP_URL = 'https://script.google.com/macros/s/AKfycbw4KTSb__1S-LTZ_8X8G0EC-w0zXuzKjEt9fHcfrjn0eUk9rAlNfmBon9a5R3NcNYs9vA/exec';
+
+  // Pass ?branch=Manesar / ?view=pan from this page to the app. Admin link is never passed through.
+  const params = new URLSearchParams(location.search);
+  params.delete('admin');
+  const qs = params.toString();
+  document.getElementById('app').src = APP_URL + (qs ? '?' + qs : '');
+
+  // Show an "Add to Home Screen" tip once, only in a normal mobile browser tab
+  // (not when already installed/standalone, and not on desktop).
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const isMobile = /iphone|ipad|android/i.test(navigator.userAgent);
+  if (isMobile && !isStandalone && !localStorage.getItem('stplTipSeen')) {
+    const isIOS = /iphone|ipad/i.test(navigator.userAgent);
+    const msg = isIOS
+      ? 'Tip: tap Share, then "Add to Home Screen" to save this as an app.'
+      : 'Tip: tap the menu (⋮), then "Add to Home screen" to save this as an app.';
+    const tip = document.getElementById('tip');
+    tip.innerHTML = '<span>' + msg + '</span><button id="tipClose">Got it</button>';
+    tip.style.display = 'flex';
+    document.getElementById('tipClose').onclick = () => {
+      tip.remove();
+      localStorage.setItem('stplTipSeen', '1');
+    };
+  } else {
+    document.getElementById('tip').remove();
+  }
+</script>
+</body>
+</html>
